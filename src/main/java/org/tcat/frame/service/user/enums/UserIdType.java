@@ -30,22 +30,22 @@ public enum UserIdType {
     private static Map<String, String> language = new HashMap<>();
 
     static {
-        for (UserIdType goodsPCycle : UserIdType.values()) {
-            codeLookUp.put(goodsPCycle.value, goodsPCycle);
+        for (UserIdType userIdType : UserIdType.values()) {
+            codeLookUp.put(userIdType.value, userIdType);
 
             Map<String, Object> codeMap = new HashMap<>();
-            codeMap.put("value", goodsPCycle.value);
+            codeMap.put("value", userIdType.value);
             for (MultiLanguage multiLanguage : MultiLanguage.values()) {
                 codeMap.put(
                         multiLanguage.name()
                         , EnumsMsg.getMsg(
                                 multiLanguage
-                                , goodsPCycle.getClass().getName() + "#" + goodsPCycle.name()
+                                , userIdType.getClass().getName() + "#" + userIdType.name()
                         ));
                 language.put(multiLanguage.name()
                         , EnumsMsg.getMsg(
                                 multiLanguage
-                                , goodsPCycle.getClass().getName() + "#" + goodsPCycle.name()
+                                , userIdType.getClass().getName() + "#" + userIdType.name()
                         ));
             }
             codeList.add(codeMap);
@@ -64,7 +64,7 @@ public enum UserIdType {
         return value;
     }
 
-    public String msg(MultiLanguage multiLanguage) {
+    public String getMsg(MultiLanguage multiLanguage) {
         return language.get(multiLanguage.name());
     }
 

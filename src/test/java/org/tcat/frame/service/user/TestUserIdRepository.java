@@ -30,7 +30,7 @@ public class TestUserIdRepository extends JunitBaseTest {
 
     @Test
     public void test_enums() {
-        show(UserIdType.STAFF.msg(MultiLanguage.cn));
+        show(UserIdType.STAFF.getMsg(MultiLanguage.cn));
         show(UserIdType.STAFF.codeList());
 
         show(CodeMsg.getMsg(MultiLanguage.en, "0"));

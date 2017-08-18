@@ -32,6 +32,12 @@ public final class EnumsMsg {
         }
     }
 
+    /**
+     * 初始化 对应的语言
+     *
+     * @param path
+     * @param language
+     */
     private static void init(String path, String language) {
         Map<String, String> map = new ConcurrentHashMap<>();
         Resource resource = new ClassPathResource(path);
@@ -60,9 +66,9 @@ public final class EnumsMsg {
     /**
      * 根据语言和枚举路径 获取对应语言的枚举
      *
-     * @param multiLanguage
-     * @param enumsPath
-     * @return
+     * @param multiLanguage 语言枚举
+     * @param enumsPath     枚举路径  classPath + "#" + 枚举名
+     * @return 对应枚举语言
      */
     public static String getMsg(MultiLanguage multiLanguage, String enumsPath) {
         if (multiLanguage == null || StringUtils.isEmptyByTrim(enumsPath)) {
@@ -74,6 +80,5 @@ public final class EnumsMsg {
         }
         return msgMap.get(enumsPath);
     }
-
 
 }

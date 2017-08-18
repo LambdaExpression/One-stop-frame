@@ -1,5 +1,8 @@
 package org.tcat.frame.service.user.enums;
 
+import org.tcat.frame.enums.EnumsMsg;
+import org.tcat.frame.enums.MultiLanguage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,35 +17,43 @@ public enum UserGender {
     /**
      * 男 value=1
      **/
-    STAFF(1, "Men", "男"),
+    MEN(1),
 
     /**
      * 女 value=2
      **/
-    USER(2, "Ms", "女");
+    MRS(2);
 
     private final int value;
-    private final String descriptionEn;
-    private final String descriptionCn;
     private static Map<Integer, UserGender> codeLookUp = new HashMap<>();
     private static List<Map<String, Object>> codeList = new ArrayList<>();
+    private static Map<String, String> language = new HashMap<>();
 
     static {
-        for (UserGender goodsPCycle : UserGender.values()) {
-            codeLookUp.put(goodsPCycle.value, goodsPCycle);
+        for (UserGender userGender : UserGender.values()) {
+            codeLookUp.put(userGender.value, userGender);
 
             Map<String, Object> codeMap = new HashMap<>();
-            codeMap.put("value", goodsPCycle.value);
-            codeMap.put("descriptionEn", goodsPCycle.descriptionEn);
-            codeMap.put("descriptionCn", goodsPCycle.descriptionCn);
+            codeMap.put("value", userGender.value);
+            for (MultiLanguage multiLanguage : MultiLanguage.values()) {
+                codeMap.put(
+                        multiLanguage.name()
+                        , EnumsMsg.getMsg(
+                                multiLanguage
+                                , userGender.getClass().getName() + "#" + userGender.name()
+                        ));
+                language.put(multiLanguage.name()
+                        , EnumsMsg.getMsg(
+                                multiLanguage
+                                , userGender.getClass().getName() + "#" + userGender.name()
+                        ));
+            }
             codeList.add(codeMap);
         }
     }
 
-    private UserGender(int value, String descriptionEn, String descriptionCn) {
+    private UserGender(int value) {
         this.value = value;
-        this.descriptionEn = descriptionEn;
-        this.descriptionCn = descriptionCn;
     }
 
     public static UserGender findByValue(int value) {
@@ -53,12 +64,8 @@ public enum UserGender {
         return value;
     }
 
-    public String descriptionEn() {
-        return descriptionEn;
-    }
-
-    public String descriptionCn() {
-        return descriptionCn;
+    public String getMsg(MultiLanguage multiLanguage) {
+        return language.get(multiLanguage.name());
     }
 
     public List<Map<String, Object>> codeList() {
