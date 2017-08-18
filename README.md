@@ -4,7 +4,7 @@
 
 **This is a One-stop frame.**
 
-**Spring Boot + Jpa + Thymeleaf + Swagger**
+**Spring Boot + Jpa + Thymeleaf + Swagger + adminLTE-2.4.0-rc**
 
 **Building**
 
