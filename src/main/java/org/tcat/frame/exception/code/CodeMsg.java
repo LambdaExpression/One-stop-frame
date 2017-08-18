@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.tcat.frame.enums.MultiLanguage;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,20 +18,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class CodeMsg {
 
     private static Logger logger = LoggerFactory.getLogger(CodeMsg.class);
-    private static Map<String, String> mapCn = new ConcurrentHashMap<>();
-    private static Map<String, String> mapEn = new ConcurrentHashMap<>();
+    private static Map<String, String> map = new ConcurrentHashMap<>();
 
     static {
-        // init cn.properties
-        init("code/code_cn.properties", mapCn);
-        // init en.properties
-        init("code/code_en.properties", mapEn);
+        for (MultiLanguage multiLanguage : MultiLanguage.values()) {
+            init("code/code_" + multiLanguage.name() + ".properties", multiLanguage);
+        }
     }
 
     private CodeMsg() {
     }
 
-    private static void init(String path, Map map) {
+    private static void init(String path, MultiLanguage multiLanguage) {
         Resource resource = new ClassPathResource(path);
         Properties props = new Properties();
         InputStreamReader isr = null;
@@ -38,7 +37,7 @@ public final class CodeMsg {
             isr = new InputStreamReader(resource.getInputStream(), "UTF-8");
             props.load(isr);
             props.forEach((k, v) -> {
-                map.put(k.toString(), v.toString());
+                map.put(multiLanguage.name() + ":" + k.toString(), v.toString());
             });
         } catch (IOException e) {
             logger.info("消息错误码 预加载失败");
@@ -53,12 +52,8 @@ public final class CodeMsg {
         }
     }
 
-    public static String getMsgEn(String code) {
-        return mapEn.getOrDefault(code, "");
-    }
-
-    public static String getMsgCn(String code) {
-        return mapCn.getOrDefault(code, "");
+    public static String getMsg(MultiLanguage multiLanguage, String code) {
+        return map.getOrDefault(multiLanguage + ":" + code, "");
     }
 
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.tcat.frame.enums.MultiLanguage;
 import org.tcat.frame.exception.code.CodeMsg;
 import org.tcat.frame.exception.code.ErrorCode;
 
@@ -43,7 +44,7 @@ public final class JsonObject<T extends Serializable> implements Serializable {
 
     public JsonObject setCode(String code) {
         if (!ErrorCode.success.equals(code)) {
-            this.setMsg(CodeMsg.getMsgEn(code));
+            this.setMsg(CodeMsg.getMsg(MultiLanguage.en, code));
         }
         this.code = code;
         return this;

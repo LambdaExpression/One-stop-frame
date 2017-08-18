@@ -19,15 +19,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class EnumsMsg {
 
+    private static Logger logger = LoggerFactory.getLogger(CodeMsg.class);
+    private static Map<String, Map<String, String>> MULTI_LANGUAGE = new ConcurrentHashMap<>();
+
     private EnumsMsg() {
 
     }
 
     static {
-        // init cn.properties
-        init("code/enums_cn.properties", "cn");
-        // init en.properties
-        init("code/enums_en.properties", "en");
+        for (MultiLanguage multiLanguage : MultiLanguage.values()) {
+            init("enums/enums_" + multiLanguage.name() + ".properties", multiLanguage.name());
+        }
     }
 
     private static void init(String path, String language) {
@@ -58,22 +60,20 @@ public final class EnumsMsg {
     /**
      * 根据语言和枚举路径 获取对应语言的枚举
      *
-     * @param language
+     * @param multiLanguage
      * @param enumsPath
      * @return
      */
-    public static String getMsg(String language, String enumsPath) {
-        if (StringUtils.isEmptyByTrim(language) || StringUtils.isEmptyByTrim(enumsPath)) {
+    public static String getMsg(MultiLanguage multiLanguage, String enumsPath) {
+        if (multiLanguage == null || StringUtils.isEmptyByTrim(enumsPath)) {
             return null;
         }
-        Map<String, String> msgMap = MULTI_LANGUAGE.get(language);
+        Map<String, String> msgMap = MULTI_LANGUAGE.get(multiLanguage.name());
         if (msgMap == null) {
             return null;
         }
         return msgMap.get(enumsPath);
     }
 
-    private static Logger logger = LoggerFactory.getLogger(CodeMsg.class);
-    private static Map<String, Map<String, String>> MULTI_LANGUAGE = new ConcurrentHashMap<>();
 
 }

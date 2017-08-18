@@ -3,6 +3,8 @@ package org.tcat.frame.service.user;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tcat.frame.JunitBaseTest;
+import org.tcat.frame.enums.MultiLanguage;
+import org.tcat.frame.exception.code.CodeMsg;
 import org.tcat.frame.service.user.dto.UserIdDto;
 import org.tcat.frame.service.user.enums.UserIdType;
 
@@ -24,6 +26,14 @@ public class TestUserIdRepository extends JunitBaseTest {
     @Test
     public void test_findById() {
         show(userIdRepository.findById(1L));
+    }
+
+    @Test
+    public void test_enums() {
+        show(UserIdType.STAFF.msg(MultiLanguage.cn));
+        show(UserIdType.STAFF.codeList());
+
+        show(CodeMsg.getMsg(MultiLanguage.en, "0"));
     }
 
 }
