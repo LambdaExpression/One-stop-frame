@@ -5,10 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.tcat.frame.bean.UserSession;
+import org.tcat.frame.util.PropertiesUtil;
+import org.tcat.frame.util.StringUtils;
 import org.tcat.frame.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
+import java.util.Properties;
 
 /**
  * 控制器基础类
@@ -19,6 +22,7 @@ public abstract class BaseController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected final String USER = "USER_IN_SESSION";
+    protected final Properties properties = PropertiesUtil.loadPropertiesFromResourceFile("config.properties");
 
 
     /**
@@ -84,6 +88,19 @@ public abstract class BaseController {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取 config.properties 的配置参数
+     *
+     * @param key key
+     * @return config.properties 对应的配置参数
+     */
+    protected String getProperties(String key) {
+        if (StringUtils.isEmptyByTrim(key)) {
+            return null;
+        }
+        return properties.getProperty(key);
     }
 
 }

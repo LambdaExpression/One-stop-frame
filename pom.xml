@@ -60,6 +60,14 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-docs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
@@ -129,7 +137,7 @@
             <properties>
                 <profileActive>local</profileActive>
                 <log.level>debug</log.level>
-                <server.domain>http://www.local-world.com</server.domain>
+                <server.domain>http://127.0.0.1:31100</server.domain>
             </properties>
         </profile>
         <profile>
@@ -138,19 +146,32 @@
                 <profileActive>prod</profileActive>
                 <log.level>info</log.level>
                 <server.active>prod-world</server.active>
-                <server.static>https://static.mr-world.com</server.static>
+                <server.domain>http://www.prod-frame.org</server.domain>
             </properties>
         </profile>
     </profiles>
 
     <build>
-        <finalName>frame</finalName>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!--fork :  如果没有该项配置，肯呢个devtools不会起作用，即应用不会restart -->
+                    <!--fork :  如果没有该项配置，那个devtoos不会起作用，即应用不会restart -->
                     <fork>true</fork>
                     <addResources>true</addResources><!--支持静态文件热部署-->
                 </configuration>

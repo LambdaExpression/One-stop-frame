@@ -1,12 +1,20 @@
 package org.tcat.frame.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.tcat.frame.interceptor.TestInterceptor;
+import org.tcat.frame.util.PropertiesUtil;
+
+import java.util.Properties;
 
 @Configuration
 public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
+
+    private static Logger logger = LoggerFactory.getLogger(InterceptorConfiguration.class);
+    private static Properties properties = PropertiesUtil.loadPropertiesFromResourceFile("config.properties");
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
