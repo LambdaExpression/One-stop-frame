@@ -28,7 +28,7 @@ public class ManagementFilter implements Filter {
     static {
         managementToken = properties.getProperty("management.token");
         if (StringUtils.isEmptyByTrim(managementToken)) {
-            logger.error("config.properties management.token configuration is empty, the system security may be hidden!");
+            logger.error("config.properties management.token configuration is empty, the system security may be hidden!!!");
             logger.error("config.properties 中 management.token 配置为空，系统安全可能存在隐患!!!");
         }
     }
