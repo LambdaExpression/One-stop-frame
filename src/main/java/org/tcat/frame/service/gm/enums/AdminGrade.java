@@ -1,4 +1,4 @@
-package org.tcat.frame.service.user.enums;
+package org.tcat.frame.service.gm.enums;
 
 import org.tcat.frame.enums.EnumsMsg;
 import org.tcat.frame.enums.MultiLanguage;
@@ -9,54 +9,59 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 用户性别
+ * 管理员等级
  * <p>
  * Created by Lin on 2016/11/15.
  */
-public enum UserGender {
+public enum AdminGrade {
     /**
-     * 男 value=1
+     * 超级管理员 value=1
      **/
-    MALE(1),
+    SUPER(1),
 
     /**
-     * 女 value=2
+     * 高级管理员 value=2
      **/
-    FEMALE(2);
+    ADVANCED(2),
+
+    /**
+     * 普通管理员 value=3
+     **/
+    ORDINARY(3);
 
     private final int value;
-    private static Map<Integer, UserGender> codeLookUp = new HashMap<>();
+    private static Map<Integer, AdminGrade> codeLookUp = new HashMap<>();
     private static List<Map<String, Object>> codeList = new ArrayList<>();
     private static Map<String, String> language = new HashMap<>();
 
     static {
-        for (UserGender userGender : UserGender.values()) {
-            codeLookUp.put(userGender.value, userGender);
+        for (AdminGrade adminDisable : AdminGrade.values()) {
+            codeLookUp.put(adminDisable.value, adminDisable);
 
             Map<String, Object> codeMap = new HashMap<>();
-            codeMap.put("value", userGender.value);
+            codeMap.put("value", adminDisable.value);
             for (MultiLanguage multiLanguage : MultiLanguage.values()) {
                 codeMap.put(
                         multiLanguage.name()
                         , EnumsMsg.getMsg(
                                 multiLanguage
-                                , userGender.getClass().getName() + "#" + userGender.name()
+                                , adminDisable.getClass().getName() + "#" + adminDisable.name()
                         ));
                 language.put(multiLanguage.name()
                         , EnumsMsg.getMsg(
                                 multiLanguage
-                                , userGender.getClass().getName() + "#" + userGender.name()
+                                , adminDisable.getClass().getName() + "#" + adminDisable.name()
                         ));
             }
             codeList.add(codeMap);
         }
     }
 
-    private UserGender(int value) {
+    private AdminGrade(int value) {
         this.value = value;
     }
 
-    public static UserGender findByValue(int value) {
+    public static AdminGrade findByValue(int value) {
         return codeLookUp.get(value);
     }
 
