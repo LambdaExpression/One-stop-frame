@@ -104,6 +104,27 @@ public class BeansConverter {
 
     }
 
+    public static Set<String> findNullForBean(Object bean) {
+        Set<String> set = new HashSet<>();
+        if (bean == null) {
+            return set;
+        }
+        try {
+            Map<String, PropertyDescriptor> descriptors = getCachePropertyDescriptors(bean.getClass());
+            for (PropertyDescriptor descriptor : descriptors.values()) {
+                String propertyName = descriptor.getName();
+                Method readMethod = descriptor.getReadMethod();
+                Object result = readMethod.invoke(bean, new Object[0]);
+                if (result == null) {
+                    set.add(propertyName);
+                }
+            }
+        } catch (Exception e) {
+            throw new BeanConverterException(e);
+        }
+        return set;
+    }
+
     private static synchronized Map<String, PropertyDescriptor> getCachePropertyDescriptors(Class<?> clazz)
             throws IntrospectionException {
         String canonicalName = clazz.getCanonicalName();
@@ -171,6 +192,7 @@ public class BeansConverter {
         public BeanConverterException(Throwable cause) {
             super(cause);
         }
+
     }
 
     protected static <T> T convert(Object src, Class<T> destClass, boolean setDefaultValForNull)
