@@ -30,7 +30,6 @@ public class UserDto extends BaseDto {
     @ApiModelProperty(value = "用户类型")
     private Integer type;
 
-
     public Long getId() {
         return id;
     }
@@ -58,4 +57,12 @@ public class UserDto extends BaseDto {
         return this;
     }
 
+    public Integer getType() {
+        return type;
+    }
+
+    public UserDto setType(Integer type) {
+        this.type = type;
+        return this;
+    }
 }

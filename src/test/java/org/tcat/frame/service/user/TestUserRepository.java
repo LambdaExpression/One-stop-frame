@@ -19,6 +19,7 @@ public class TestUserRepository extends JunitBaseTest {
                 .setId(1L)
                 .setAccount("account")
                 .setPassword("password");
+//                .setType(1);
         show(userRepository.save(userDto));
     }
 
