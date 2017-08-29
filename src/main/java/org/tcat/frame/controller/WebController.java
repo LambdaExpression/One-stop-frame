@@ -37,10 +37,9 @@ public class WebController extends BaseController {
 
     @RequestMapping(value = "/exception", method = RequestMethod.POST)
     public JsonObject exceptionPost() {
-        JsonObject json = new JsonObject();
         //throw Exception
         Integer.valueOf("aa");
-        return json;
+        return JsonObject.ok();
     }
 
 }

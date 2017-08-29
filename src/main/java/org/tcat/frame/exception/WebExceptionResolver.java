@@ -40,11 +40,8 @@ public class WebExceptionResolver {
             mav.setViewName(DEFAULT_ERROR_VIEW);
             return mav;
         } else {
-            JsonObject json = new JsonObject();
-            json.setCode(ErrorCode.error);
-            json.setData(exMessage);
             try (PrintWriter writer = response.getWriter()) {
-                writer.write(new Gson().toJson(json));
+                writer.write(new Gson().toJson(JsonObject.error(ErrorCode.error, null, exMessage)));
                 writer.flush();
             } catch (IOException e) {
             }

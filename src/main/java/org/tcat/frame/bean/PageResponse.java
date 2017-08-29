@@ -1,5 +1,8 @@
 package org.tcat.frame.bean;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,6 +10,7 @@ import java.util.List;
  * 分页数据返回
  * Created by Lin on 2017/8/4.
  */
+@ApiModel(value = "PageResponse", description = "分页数据返回对象")
 public class PageResponse<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -14,24 +18,30 @@ public class PageResponse<T> implements Serializable {
     /**
      * 当前页码(索引从0开始)
      */
+    @ApiModelProperty(value = "当前页码(索引从0开始)")
     private int number;
 
     /**
      * 每页查询的条数
      */
+    @ApiModelProperty(value = "每页查询的条数")
     private int size;
     /**
      * 查询的总条数
      */
+    @ApiModelProperty(value = "查询的总条数")
     private long totalElements;
 
     /**
      * 总页数
      */
+    @ApiModelProperty(value = "总页数")
     private int totalPages;
+
     /**
      * 返回的分页内容
      */
+    @ApiModelProperty(value = "返回的分页内容")
     private List<T> content;
 
     /**

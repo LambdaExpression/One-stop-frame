@@ -1,29 +1,37 @@
 package org.tcat.frame.bean;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * 用户Seesion
  * Created by Lin on 2017/8/5.
  */
+@ApiModel(value = "UserSession", description = "用户Session对象")
 public class UserSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
      * id
      */
+    @ApiModelProperty(value = "ID")
     private Long Id;
     /**
      * 账号名
      */
+    @ApiModelProperty(value = "账号名")
     private String account;
     /**
      * 用户名
      */
+    @ApiModelProperty(value = "用户名")
     private String name;
     /**
      * 用户类型
      */
+    @ApiModelProperty(value = "用户类型")
     private Integer type;
 
     /**

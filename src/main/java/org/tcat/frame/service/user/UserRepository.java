@@ -1,6 +1,6 @@
 package org.tcat.frame.service.user;
 
-import org.hibernate.annotations.SelectBeforeUpdate;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.tcat.frame.service.BaseRepository;

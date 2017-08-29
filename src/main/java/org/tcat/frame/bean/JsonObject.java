@@ -38,6 +38,54 @@ public final class JsonObject<T extends Serializable> implements Serializable {
     @ApiModelProperty(value = "结果数据")
     private T data;
 
+    private JsonObject() {
+    }
+
+    private JsonObject(T data) {
+        this.data = data;
+    }
+
+    public JsonObject(String code, String msg) {
+        this.code = code;
+
+        if (!ErrorCode.success.equals(code) && msg == null) {
+            this.msg = CodeMsg.getMsg(MultiLanguage.en, code);
+        } else {
+            this.msg = msg;
+        }
+    }
+
+    public JsonObject(String code, String msg, T data) {
+        this.code = code;
+        this.data = data;
+
+        if (!ErrorCode.success.equals(code) && msg == null) {
+            this.msg = CodeMsg.getMsg(MultiLanguage.en, code);
+        } else {
+            this.msg = msg;
+        }
+    }
+
+    public static <T extends Serializable> JsonObject<T> ok() {
+        return new JsonObject<>();
+    }
+
+    public static <T extends Serializable> JsonObject<T> ok(T data) {
+        return new JsonObject<>(data);
+    }
+
+    public static <T extends Serializable> JsonObject<T> error(String code) {
+        return new JsonObject<>(code, null);
+    }
+
+    public static <T extends Serializable> JsonObject<T> error(String code, String msg) {
+        return new JsonObject<>(code, msg);
+    }
+
+    public static <T extends Serializable> JsonObject<T> error(String code, String msg, T data) {
+        return new JsonObject<>(code, msg, data);
+    }
+
     public String getCode() {
         return code;
     }

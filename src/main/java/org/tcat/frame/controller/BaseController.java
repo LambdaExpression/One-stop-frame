@@ -21,7 +21,7 @@ import java.util.Properties;
 public abstract class BaseController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    protected final String USER = "USER_IN_SESSION";
+    protected final String USER = PropertiesUtil.getValue("config.properties", "user.session");
     protected final Properties properties = PropertiesUtil.loadPropertiesFromResourceFile("config.properties");
 
 

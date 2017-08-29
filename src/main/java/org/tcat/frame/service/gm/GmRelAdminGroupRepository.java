@@ -6,6 +6,6 @@ import org.tcat.frame.service.gm.dto.GmRelAdminGroupDto;
 /**
  * Created by Lin on 2017/8/24.
  */
-public interface GmRelAdminGroupRepository extends BaseRepository<GmRelAdminGroupDto,Long>{
+public interface GmRelAdminGroupRepository extends BaseRepository<GmRelAdminGroupDto,Long> {
 
 }
