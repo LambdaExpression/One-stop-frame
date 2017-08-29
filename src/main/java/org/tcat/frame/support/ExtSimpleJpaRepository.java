@@ -3,7 +3,6 @@ package org.tcat.frame.support;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tcat.frame.service.BaseRepository;
 import org.tcat.frame.util.BeansConverter;
@@ -14,8 +13,6 @@ import java.io.Serializable;
 /**
  * Created by Lin on 2017/8/25.
  */
-@Repository
-@Transactional(readOnly = true)
 public class ExtSimpleJpaRepository<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
 
     private final EntityManager em;
