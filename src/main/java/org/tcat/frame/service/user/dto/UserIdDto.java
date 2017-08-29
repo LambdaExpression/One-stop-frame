@@ -35,6 +35,13 @@ public class UserIdDto extends BaseDto {
     @ApiModelProperty(value = "用户id类型 1:员工 2:普通用户")
     private UserIdType type;
 
+    public UserIdDto() {
+    }
+
+    public UserIdDto(UserIdType type) {
+        this.type = type;
+    }
+
     /**
      * id
      *
