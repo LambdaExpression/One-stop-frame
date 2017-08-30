@@ -26,7 +26,6 @@ public class Swagger2Configuration extends WebMvcConfigurerAdapter {
      * <!--swagger资源配置-->
      * <mvc:resources location="classpath:/META-INF/resources/" mapping="swagger-ui.html"/>
      * <mvc:resources location="classpath:/META-INF/resources/webjars/" mapping="/webjars/**"/>
-     * 不知道为什么，这也是spring boot的一个缺点（菜鸟觉得的）
      *
      * @param registry
      */

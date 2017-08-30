@@ -2,10 +2,13 @@ package org.tcat.frame.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.tcat.frame.bean.JsonObject;
+import org.tcat.frame.component.CacheDate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +27,22 @@ public class WebController extends BaseController {
         ModelAndView model = new ModelAndView("index_bak");
         model.addObject("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         return model;
+    }
+
+    @Autowired
+    private CacheDate cacheDate;
+
+    @RequestMapping(value = "test")
+    public JsonObject test() {
+        cacheDate.putMinutes("123", "456", 1);
+        return JsonObject.ok();
+    }
+
+
+    @RequestMapping(value = "test2")
+    public JsonObject test2() {
+        cacheDate.show();
+        return JsonObject.ok();
     }
 
 }
