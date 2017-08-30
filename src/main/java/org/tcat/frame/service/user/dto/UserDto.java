@@ -4,6 +4,7 @@ package org.tcat.frame.service.user.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.tcat.frame.service.BaseDto;
+import org.tcat.frame.service.user.enums.UserType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,15 +21,15 @@ public class UserDto extends BaseDto {
     @Id
     @ApiModelProperty(value = "ID")
     private Long id;
-    @Column
+    @Column(unique = true, nullable = false)
     @ApiModelProperty(value = "账号名")
     private String account;
-    @Column
+    @Column(nullable = false)
     @ApiModelProperty(value = "密码")
     private String password;
-    @Column
+    @Column(nullable = false)
     @ApiModelProperty(value = "用户类型")
-    private Integer type;
+    private UserType type;
 
     public Long getId() {
         return id;
@@ -57,11 +58,11 @@ public class UserDto extends BaseDto {
         return this;
     }
 
-    public Integer getType() {
+    public UserType getType() {
         return type;
     }
 
-    public UserDto setType(Integer type) {
+    public UserDto setType(UserType type) {
         this.type = type;
         return this;
     }

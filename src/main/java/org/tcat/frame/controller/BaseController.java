@@ -1,6 +1,7 @@
 package org.tcat.frame.controller;
 
 
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.Properties;
  * Created by Lin on 2017/8/3.
  */
 @Transactional
+@Api(produces = "application/json")
 public abstract class BaseController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

@@ -16,16 +16,22 @@ public class TestUserRepository extends JunitBaseTest {
     @Test
     public void test_save() {
         UserDto userDto = new UserDto()
-                .setId(1L)
-//                .setAccount("account")
-//                .setPassword("password");
-                .setType(3);
+                .setId(5L)
+                .setAccount("account")
+                .setPassword("password");
+//                .setType(3);
         show(userRepository.dynamicSave(userDto.getId(), userDto));
     }
 
     @Test
     public void test_findById() {
         show(userRepository.findByAccountAndPassword("account", "password"));
+    }
+
+    @Test
+    public void test_findByAccount(){
+        show(userRepository.findByAccount("account"));
+        show(userRepository.findByAccount("Account"));
     }
 
 }

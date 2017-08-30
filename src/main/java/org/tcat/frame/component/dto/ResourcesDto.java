@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Lin on 2017/8/24.
@@ -16,17 +17,11 @@ public class ResourcesDto implements Serializable {
     @ApiModelProperty(value = "ID")
     private String id;
 
-    @ApiModelProperty(value = "上级资源id")
-    private String pid;
-
     @ApiModelProperty(value = "名称")
     private String name;
 
     @ApiModelProperty(value = "路径")
     private String url;
-
-    @ApiModelProperty(value = "排序 数字越小越靠前")
-    private Integer rank;
 
     @ApiModelProperty(value = "类型 0：菜单 1：功能")
     private Integer type;
@@ -34,21 +29,15 @@ public class ResourcesDto implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "子资源管理")
+    private List<ResourcesDto> child;
+
     public String getId() {
         return id;
     }
 
     public ResourcesDto setId(String id) {
         this.id = id;
-        return this;
-    }
-
-    public String getPid() {
-        return pid;
-    }
-
-    public ResourcesDto setPid(String pid) {
-        this.pid = pid;
         return this;
     }
 
@@ -70,15 +59,6 @@ public class ResourcesDto implements Serializable {
         return this;
     }
 
-    public Integer getRank() {
-        return rank;
-    }
-
-    public ResourcesDto setRank(Integer rank) {
-        this.rank = rank;
-        return this;
-    }
-
     public Integer getType() {
         return type;
     }
@@ -96,5 +76,13 @@ public class ResourcesDto implements Serializable {
         this.remark = remark;
         return this;
     }
-    
+
+    public List<ResourcesDto> getChild() {
+        return child;
+    }
+
+    public ResourcesDto setChild(List<ResourcesDto> child) {
+        this.child = child;
+        return this;
+    }
 }

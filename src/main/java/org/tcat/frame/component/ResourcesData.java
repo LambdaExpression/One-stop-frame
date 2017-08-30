@@ -1,116 +1,173 @@
 package org.tcat.frame.component;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tcat.frame.component.dto.ResourcesDto;
+import org.tcat.frame.component.enums.ResourcesType;
+import org.tcat.frame.service.gm.GmAdminRepository;
+import org.tcat.frame.service.gm.GmRelAdminRoleRepository;
+import org.tcat.frame.service.gm.GmRelRoleResourceRepository;
+import org.tcat.frame.service.gm.GmRoleRepository;
+import org.tcat.frame.service.gm.dto.GmRelAdminRoleDto;
+import org.tcat.frame.service.gm.dto.GmRelRoleResourceDto;
+import org.tcat.frame.service.gm.dto.GmRoleDto;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 资源管理
  * Created by Lin on 2017/8/24.
  */
 @Component("resourcesData")
 public class ResourcesData implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static Map<String, ResourcesDto> resourceDtoMap = new HashMap<>();
+    private static final String[] resources = {
+            "system_management.yml"
+    };
+    private List<ResourcesDto> resourcesAll = new Vector<>();
+    private List<ResourcesDto> resourcesView = new Vector<>();
+    private Map<Long, Set<String>> roleResources = new ConcurrentHashMap<>();
+    private Map<String, Set<Long>> resourcesRole = new ConcurrentHashMap<>();
+    private Map<Long, List<ResourcesDto>> adminResourcesView = new ConcurrentHashMap<>();
+
+    @Autowired
+    private GmRelRoleResourceRepository gmRelRoleResourceRepository;
+    @Autowired
+    private GmRoleRepository gmRoleRepository;
+    @Autowired
+    private GmAdminRepository gmAdminRepository;
+    @Autowired
+    private GmRelAdminRoleRepository gmRelAdminRoleRepository;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        initResources();
+        initRoleResouces();
     }
 
-    private void initResources() {
-        InputStream inputStream = ResourcesData.class.getClassLoader().getResourceAsStream("resources" + File.separator + "resources.xml");
-        SAXReader saxReader = new SAXReader();
-        try {
-            Document document = saxReader.read(inputStream);
-            Element employees = document.getRootElement();
-            for (Iterator i = employees.elementIterator(); i.hasNext(); ) {
-                Element employee = (Element) i.next();
-                ResourcesDto resourcesDto = new ResourcesDto();
+    public synchronized void reInit() {
+        initResources();
+        initRoleResouces();
+    }
 
-                resourcesDto.setId(employee.attributeValue("id"));
-                resourcesDto.setName(employee.attributeValue("name"));
-                resourcesDto.setPid(employee.attributeValue("pid"));
-                resourcesDto.setUrl(employee.attributeValue("url"));
-                resourcesDto.setRemark(employee.attributeValue("remark", ""));
-                resourcesDto.setRank(toInt(employee.attributeValue("rank")));
-                resourcesDto.setType(toInt(employee.attributeValue("type")));
+    public synchronized void reAdminResourcesView() {
+        adminResourcesView.clear();
+    }
 
-                this.checkResource(resourcesDto, employee);
+    private synchronized void initResources() {
 
-                if (resourceDtoMap.get(resourcesDto.getId()) == null) {
-                    resourceDtoMap.put(resourcesDto.getId(), resourcesDto);
-                } else {
-                    throw new RuntimeException("id(" + resourcesDto.getId() + ") 重复 " + employee.asXML());
+        resourcesAll.clear();
+        resourcesView.clear();
+
+        for (String resource : resources) {
+            InputStream inputStream = ResourcesData.class.getClassLoader().getResourceAsStream("resources" + File.separator + resource);
+            Yaml yaml = new Yaml();
+            ResourcesDto resourcesDto = new Gson().fromJson(new Gson().toJson(yaml.load(inputStream))
+                    , new TypeToken<ResourcesDto>() {
+                    }.getType());
+            resourcesAll.add(resourcesDto);
+        }
+        resourcesView = this.getViewResources(resourcesAll, null);
+    }
+
+
+    private synchronized void initRoleResouces() {
+
+        roleResources.clear();
+        resourcesRole.clear();
+        adminResourcesView.clear();
+
+        List<GmRoleDto> gmRoleDtoList = gmRoleRepository.findAll();
+        if (gmRoleDtoList != null) {
+            for (GmRoleDto gmRoleDto : gmRoleDtoList) {
+                List<GmRelRoleResourceDto> relRoleResourceList = gmRelRoleResourceRepository.findByRoleId(gmRoleDto.getId());
+                Set<String> resourcesSet = Collections.synchronizedSet(new HashSet<>());
+                if (relRoleResourceList != null && relRoleResourceList.size() > 0) {
+                    for (GmRelRoleResourceDto gmRelRoleResourceDto : relRoleResourceList) {
+                        resourcesSet.add(gmRelRoleResourceDto.getResourceId());
+                        Set<Long> roleSet = resourcesRole.get(gmRelRoleResourceDto.getResourceId());
+                        if (roleSet == null) {
+                            roleSet = Collections.synchronizedSet(new HashSet<>());
+                        }
+                        roleSet.add(gmRoleDto.getId());
+                        resourcesRole.put(gmRelRoleResourceDto.getResourceId(), roleSet);
+                    }
+                }
+                if (resourcesSet.size() > 0) {
+                    roleResources.put(gmRoleDto.getId(), resourcesSet);
                 }
             }
-            for (Iterator i = employees.elementIterator(); i.hasNext(); ) {
-                Element employee = (Element) i.next();
-                if (employee.attributeValue("pid") != null && resourceDtoMap.get(employee.attributeValue("pid")) == null)
-                    throw new RuntimeException("Pid(" + employee.attributeValue("pid") + ") 无对应的id " + employee.asXML());
-            }
-        } catch (DocumentException e) {
-            throw new RuntimeException("resources.xml 资源文件 读取失败", e);
         }
-        logger.info("资源 加载完成");
-    }
 
-    private Integer toInt(Object obj) {
-        if (obj instanceof Byte) {
-            return Integer.valueOf((Byte) obj);
-        }
-        if (obj instanceof Integer) {
-            return (Integer) obj;
-        }
-        if (obj instanceof String) {
-            try {
-                return Integer.valueOf((String) obj);
-            } catch (NumberFormatException e) {
-                //不处理异常
-            }
-        }
-        return null;
-    }
-
-    private void checkResource(ResourcesDto resourcesDto, Element employee) {
-        this.checkParam(resourcesDto.getId(), "id 不能为空 " + employee.asXML());
-        this.checkParam(resourcesDto.getName(), "name 不能为空 " + employee.asXML());
-        this.checkParam(resourcesDto.getRank(), "rank 不能为空 " + employee.asXML());
-        this.checkParam(resourcesDto.getType(), "type 不能为空 " + employee.asXML());
-    }
-
-    private void checkParam(Object obj, String eMessage) {
-        if (obj == null)
-            throw new RuntimeException(eMessage);
-    }
-
-    public Map<String, ResourcesDto> getResourceDTOMap() {
-        if (resourceDtoMap.size() == 0) {
-            initResources();
-        }
-        return resourceDtoMap;
     }
 
     /**
-     * 获得一个资源
+     * 筛选 菜单资源
      *
-     * @param resId 资源id
-     * @return resource 资源对象
+     * @param resourcesList 资源
+     * @param purview       可查看的权限（可为空）
+     * @return 菜单资源集合
      */
-    public ResourcesDto getResource(String resId) {
-        return this.getResourceDTOMap().get(resId);
+    private synchronized List<ResourcesDto> getViewResources(List<ResourcesDto> resourcesList, Set<String> purview) {
+        if (resourcesList == null) {
+            return null;
+        }
+        List<ResourcesDto> resourcesViewList = new Vector<>();
+        for (ResourcesDto resourcesDto : resourcesList) {
+            if (Integer.valueOf(ResourcesType.menu.value()).equals(resourcesDto.getType())
+                    && (purview == null || purview.contains(resourcesDto.getId()))) {
+                resourcesDto.setChild(getViewResources(resourcesDto.getChild(), purview));
+                resourcesViewList.add(resourcesDto);
+            }
+        }
+        return resourcesViewList.size() == 0 ? null : resourcesViewList;
+
     }
+
+    /**
+     * 获取用户的菜单列表
+     *
+     * @param adminId 用户id
+     * @return 菜单列表
+     */
+    public synchronized List<ResourcesDto> getViewResourcesForAdminId(Long adminId) {
+        List<ResourcesDto> rList = adminResourcesView.get(adminId);
+        if (rList == null || rList.size() == 0) {
+            List<GmRelAdminRoleDto> rarList = gmRelAdminRoleRepository.findByAdminId(adminId);
+            if (rarList != null && rarList.size() > 0) {
+                Set<String> purview = new HashSet<>();
+                for (GmRelAdminRoleDto gmRelAdminRoleDto : rarList) {
+                    Set<String> pu = roleResources.get(gmRelAdminRoleDto.getRoleId());
+                    if (pu != null && pu.size() > 0) {
+                        purview.addAll(pu);
+                    }
+                }
+                if (purview.size() > 0) {
+                    List<ResourcesDto> resList = this.getViewResources(resourcesView, purview);
+                    if (resList != null && resList.size() > 0) {
+                        rList = resList;
+                    }
+                }
+            }
+            if (rList == null) {
+                rList = new ArrayList<>();
+            } else {
+                adminResourcesView.put(adminId, rList);
+            }
+        }
+        return rList;
+    }
+
+//    public synchronized boolean hasPermissions(Long adminId,String url)
 
 }

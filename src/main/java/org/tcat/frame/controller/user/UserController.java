@@ -19,6 +19,7 @@ import org.tcat.frame.service.user.UserRepository;
 import org.tcat.frame.service.user.dto.UserDto;
 import org.tcat.frame.service.user.dto.UserIdDto;
 import org.tcat.frame.service.user.enums.UserIdType;
+import org.tcat.frame.service.user.enums.UserType;
 import org.tcat.frame.util.BeansConverter;
 import org.tcat.frame.util.PageUtils;
 import org.tcat.frame.util.StringUtils;
@@ -39,7 +40,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserRepository userRepository;
 
-    @ApiOperation(value = "创建用户", produces = "application/json")
+    @ApiOperation(value = "创建用户")
     @RequestMapping(value = "", method = {RequestMethod.POST})
     public JsonObject<UserDto> create(@RequestBody UserVo userVo) {
         if (userVo == null || !ValidatorUtils.validate(userVo).getResult()) {
@@ -50,7 +51,12 @@ public class UserController extends BaseController {
         }
         UserIdDto userIdDto = userIdRepository.save(new UserIdDto(UserIdType.USER));
         userVo.setId(userIdDto.getId());
-        return JsonObject.ok(userRepository.save(BeansConverter.copy(userVo, UserDto.class)));
+        UserDto userDto = BeansConverter.copy(userVo, UserDto.class)
+                .setId(userIdDto.getId())
+                .setType(UserType.ORDINARY);
+        userDto = userRepository.save(userDto);
+        userDto.setPassword(null);
+        return JsonObject.ok(userDto);
     }
 
     @ApiOperation(value = "更新用户")
@@ -69,10 +75,13 @@ public class UserController extends BaseController {
         return JsonObject.ok(userRepository.getOne(id));
     }
 
-    @ApiOperation(value = "查询用户")
+    @ApiOperation(value = "查询用户", produces = "application/json")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public JsonObject<PageResponse<UserDto>> list(@ModelAttribute PageRequest pageRequest) {
         Page<UserDto> userDtoPage = userRepository.findAll(pageRequest);
+        userDtoPage.getContent().forEach(i -> {
+            i.setPassword(null);
+        });
         return JsonObject.ok(PageUtils.pageConversion(userDtoPage));
     }
 
