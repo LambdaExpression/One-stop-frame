@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Lin on 2017/8/24.
  */
 @Component("resourcesData")
-public class ResourcesData implements InitializingBean {
+public final class ResourcesData implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final String[] resources = {

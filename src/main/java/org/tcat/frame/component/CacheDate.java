@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Lin on 2017/8/30.
  */
 @Component("cacheDate")
-public class CacheDate {
+public final class CacheDate {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -29,7 +29,7 @@ public class CacheDate {
      */
     private static final int DEFAULT_SAVE_TIME_SECONDS = 24 * 60 * 60;
 
-    private static Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
+    private static Map<String, CacheDto> cacheMap = new ConcurrentHashMap<>();
 
     @Autowired
     private DynamicTimer dynamicTimer;
@@ -39,17 +39,17 @@ public class CacheDate {
     }
 
     public synchronized boolean putSeconds(String key, Object value, int amount) {
-        Date expiration = DateUtils.addSeconds(new Date(), DEFAULT_SAVE_TIME_SECONDS);
+        Date expiration = DateUtils.addSeconds(new Date(), amount);
         return put(key, value, expiration);
     }
 
     public synchronized boolean putMinutes(String key, Object value, int amount) {
-        Date expiration = DateUtils.addMinutes(new Date(), DEFAULT_SAVE_TIME_SECONDS);
+        Date expiration = DateUtils.addMinutes(new Date(), amount);
         return put(key, value, expiration);
     }
 
     public synchronized boolean putDays(String key, Object value, int amount) {
-        Date expiration = DateUtils.addDays(new Date(), DEFAULT_SAVE_TIME_SECONDS);
+        Date expiration = DateUtils.addDays(new Date(), amount);
         return put(key, value, expiration);
     }
 
@@ -58,30 +58,38 @@ public class CacheDate {
             logger.error("添加缓存数据 过期时间空或已过期 data={}", expiration);
             return false;
         }
-        cacheMap.put(key, new Cache(value, expiration));
-        dynamicTimer.addCronTask(new Runnable() {
-            @Override
-            public void run() {
-                if (expiration.equals(getExpiration(key))) {
-                    remove(key);
-                }
-                System.out.println("expiration =" + DateUtils.format(expiration, DateUtils.TIMESTAMP_PATTERN));
-                System.out.println("key =" + key);
-            }
-        }, expiration);
+        cacheMap.put(key, new CacheDto(value, expiration));
+        dynamicTimer.addCronTask(
+                new TimerRunnable() {
+                    @Override
+                    public void customize() {
+                        if (expiration.equals(getExpiration(key))) {
+                            remove(key);
+                        }
+                    }
+                }.setOneTime(dynamicTimer)
+                , expiration);
         return true;
     }
 
     public synchronized Object get(String key) {
-        Cache cache = cacheMap.get(key);
+        CacheDto cache = cacheMap.get(key);
         if (cache != null) {
             return cache.getData();
         }
         return null;
     }
 
+    public synchronized <T> T get(String key, Class<T> t) {
+        CacheDto cache = cacheMap.get(key);
+        if (cache != null) {
+            return (T) cache.getData();
+        }
+        return null;
+    }
+
     public synchronized Date getExpiration(String key) {
-        Cache cache = cacheMap.get(key);
+        CacheDto cache = cacheMap.get(key);
         if (cache != null) {
             return cache.getExpiration();
         }
@@ -92,48 +100,49 @@ public class CacheDate {
         cacheMap.remove(key);
     }
 
-    public synchronized void show() {
-        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(cacheMap));
+    public synchronized String show() {
+        return new GsonBuilder().setPrettyPrinting().create().toJson(cacheMap);
     }
 
+}
+
+/**
+ * 缓存对象
+ */
+final class CacheDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     /**
-     * 缓存对象
+     * 缓存数据
      */
-    private class Cache implements Serializable {
+    private Object data;
+    /**
+     * 过期时间
+     */
+    private Date expiration;
 
-        private static final long serialVersionUID = 1L;
+    public CacheDto(Object data, Date expiration) {
+        this.data = data;
+        this.expiration = expiration;
+    }
 
-        /**
-         * 缓存数据
-         */
-        private Object data;
-        /**
-         * 过期时间
-         */
-        private Date expiration;
+    public Object getData() {
+        return data;
+    }
 
-        public Cache(Object data, Date expiration) {
-            this.data = data;
-            this.expiration = expiration;
-        }
+    public CacheDto setData(Object data) {
+        this.data = data;
+        return this;
+    }
 
-        public Object getData() {
-            return data;
-        }
+    public Date getExpiration() {
+        return expiration;
+    }
 
-        public Cache setData(Object data) {
-            this.data = data;
-            return this;
-        }
-
-        public Date getExpiration() {
-            return expiration;
-        }
-
-        public Cache setExpiration(Date expiration) {
-            this.expiration = expiration;
-            return this;
-        }
+    public CacheDto setExpiration(Date expiration) {
+        this.expiration = expiration;
+        return this;
     }
 
 }

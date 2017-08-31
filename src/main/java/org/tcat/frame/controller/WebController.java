@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.tcat.frame.bean.JsonObject;
 import org.tcat.frame.component.CacheDate;
+import org.tcat.frame.component.DynamicTimer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,8 @@ public class WebController extends BaseController {
 
     @Autowired
     private CacheDate cacheDate;
+    @Autowired
+    private DynamicTimer dynamicTimer;
 
     @RequestMapping(value = "test")
     public JsonObject test() {
@@ -38,11 +41,9 @@ public class WebController extends BaseController {
         return JsonObject.ok();
     }
 
-
     @RequestMapping(value = "test2")
-    public JsonObject test2() {
-        cacheDate.show();
-        return JsonObject.ok();
+    public JsonObject<String> test2() {
+        return JsonObject.ok(cacheDate.show());
     }
 
 }
