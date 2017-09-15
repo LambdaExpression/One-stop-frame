@@ -12,26 +12,26 @@
 
 id: "1504059059"
 name: "系统管理"
-url:
+url: "/system"
 type: 1
 child:
   - id: "1504059255"
     name: "资源管理"
-    url:
+    url: "/system/resource"
     type: 1
     child:
   - id: "1504059323"
     name: "用户管理"
-    url:
+    url: "/system/user"
     type: 1
     child:
   - id: "1504059326"
     name: "角色管理"
-    url:
+    url: "/system/role"
     type: 1
     child:
   - id: "1504059332"
     name: "分组管理"
-    url:
+    url: "/system/group"
     type: 1
     child:
