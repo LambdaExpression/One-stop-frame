@@ -26,6 +26,7 @@ public class ILoginInterceptor extends AbstractInterceptor {
     private final static String DOMAIN = PropertiesUtil.getValue("config.properties", "domain");
     private final static String USER = PropertiesUtil.getValue("config.properties", "user.session");
 
+    private final static String USER_LOGIN = DOMAIN + "/user/login";
     private final static String NO_PERMISSION = DOMAIN + "/error/403";
 
     @Override
@@ -67,7 +68,7 @@ public class ILoginInterceptor extends AbstractInterceptor {
             if (iLogin.required()) {
                 if (userSession == null) {
                     if (HttpMethod.GET.name().equals(request.getMethod())) {
-                        response.sendRedirect(NO_PERMISSION);
+                        response.sendRedirect(USER_LOGIN);
                     } else {
                         ajaxResponse(request, response, JsonObject.error(ErrorCode.U_login_Un));
                     }

@@ -3,6 +3,7 @@ package org.tcat.frame.service.gm.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Table;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.tcat.frame.service.BaseDto;
 import org.tcat.frame.service.gm.enums.AdminDisable;
 import org.tcat.frame.service.gm.enums.AdminGrade;
@@ -28,26 +29,32 @@ public class AdminDto extends BaseDto {
     @Id
     @ApiModelProperty(value = "用户id")
     @Column(name = "user_id", nullable = false)
+    @NotEmpty(message = "用户id不能为空")
     private Long userId;
 
     @ApiModelProperty(value = "账号")
     @Column(nullable = false)
+    @NotEmpty(message = "账号不能为空")
     private String account;
 
     @ApiModelProperty(value = "密码")
     @Column(nullable = false)
+    @NotEmpty(message = "密码不能为空")
     private String password;
 
     @ApiModelProperty(value = "中文名")
     @Column(name = "name_cn", nullable = false)
+    @NotEmpty(message = "中文名不能为空")
     private String nameCn;
 
     @ApiModelProperty(value = "英文名")
     @Column(name = "name_en", nullable = false)
+    @NotEmpty(message = "英文名不能为空")
     private String nameEn;
 
     @ApiModelProperty(value = "性别")
     @Column(nullable = false)
+    @NotEmpty(message = "性别不能为空")
     private UserGender gender;
 
     @ApiModelProperty(value = "邮箱")
@@ -68,10 +75,12 @@ public class AdminDto extends BaseDto {
 
     @ApiModelProperty(value = "管理员等级")
     @Column(nullable = false)
+    @NotEmpty(message = "管理员等级不能为空")
     private AdminGrade grade;
 
     @ApiModelProperty(value = "是否禁用")
     @Column(nullable = false)
+    @NotEmpty(message = "是否禁用不能为空")
     private AdminDisable disable;
 
     @ApiModelProperty(value = "最后登录时间")

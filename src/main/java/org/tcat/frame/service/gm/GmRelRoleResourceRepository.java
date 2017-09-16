@@ -13,4 +13,6 @@ public interface GmRelRoleResourceRepository extends BaseRepository<GmRelRoleRes
 
     List<GmRelRoleResourceDto> findByRoleId(Long roleId);
 
+    int deleteByRoleId(Long roleId);
+
 }

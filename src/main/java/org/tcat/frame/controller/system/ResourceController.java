@@ -33,8 +33,8 @@ public class ResourceController extends BaseController {
     }
 
     @ApiOperation(value = "获取 全部资源列表", hidden = true)
-    @RequestMapping(value = {"/all_list"}, method = RequestMethod.GET)
-    public JsonObject<List<ResourcesDto>> getResourcesAll() {
+    @RequestMapping(value = "/all_list", method = RequestMethod.GET)
+    public JsonObject<List<ResourcesDto>> addList() {
         return JsonObject.ok(resourcesData.getResourcesAll());
     }
 

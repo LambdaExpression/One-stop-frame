@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.tcat.frame.bean.JsonObject;
 import org.tcat.frame.bean.PageRequest;
 import org.tcat.frame.bean.PageResponse;
@@ -75,10 +76,21 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public JsonObject<PageResponse<UserDto>> list(@ModelAttribute PageRequest pageRequest) {
         Page<UserDto> userDtoPage = userRepository.findAll(pageRequest);
-        userDtoPage.getContent().forEach(i -> {
-            i.setPassword(null);
-        });
+        userDtoPage.getContent().forEach(i -> i.setPassword(null));
         return JsonObject.ok(PageUtils.pageConversion(userDtoPage));
+    }
+
+    @ApiOperation(value = "用户退出")
+    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+    public JsonObject logout() {
+        this.resetSession();
+        return JsonObject.ok();
+    }
+
+    @ApiOperation(value = "用户登录页面")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login() {
+        return new ModelAndView("/login");
     }
 
     @ApiOperation(value = "用户登录")
@@ -94,13 +106,6 @@ public class UserController extends BaseController {
         this.setUserSession(new UserSession()
                 .setId(userDto.getId())
                 .setAccount(userDto.getAccount()));
-        return JsonObject.ok();
-    }
-
-    @ApiOperation(value = "用户退出")
-    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
-    public JsonObject logout() {
-        this.resetSession();
         return JsonObject.ok();
     }
 
