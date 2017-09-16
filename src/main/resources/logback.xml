@@ -60,6 +60,12 @@
     <!-- ###########################为不同的包配置不同的日志输出########################### -->
     <!-- spring-boot -->
     <logger name="org.springframework.boot" level="info"/>
+    <logger name="org.springframework.core" level="info"/>
+    <logger name="org.springframework.beans" level="info"/>
+    <logger name="org.springframework.web" level="info"/>
+    <logger name="org.springframework.aop" level="info"/>
+    <logger name="org.springframework.context" level="info"/>
+    <logger name="springfox.documentation" level="info"/>
 
     <!--## 日志输出级别 ## @log.level@ -->
     <root level="@log.level@">

@@ -26,6 +26,10 @@ public interface UserCode {
      * 账号未登录
      **/
     String U_login_Un = "0x030103";
+    /**
+     * 账号权限不足
+     */
+    String U_No_Permission = "0x030104";
 
     /**
      * 账号不存在
@@ -49,11 +53,17 @@ public interface UserCode {
      **/
     String U_passwd_fail = "0x030302";
 
-    /**用户类型为空**/
+    /**
+     * 用户类型为空
+     **/
     String U_type_null = "0x030401";
-    /**用户类型错误**/
+    /**
+     * 用户类型错误
+     **/
     String U_type_error = "0x030402";
 
-    /**账号余额不足*/
+    /**
+     * 账号余额不足
+     */
     String U_balance_little = "0x030501";
 }

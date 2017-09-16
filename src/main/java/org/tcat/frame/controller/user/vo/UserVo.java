@@ -10,13 +10,13 @@ import java.io.Serializable;
 /**
  * Created by Lin on 2017/8/4.
  */
-@ApiModel(value = "UserVo",description = "用户对象")
+@ApiModel(value = "UserVo", description = "用户对象")
 public class UserVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
 
-    @ApiModelProperty(value = "ID")
+    @ApiModelProperty(value = "ID ,创建时不需要传输")
     private Long id;
     @ApiModelProperty(value = "账号")
     @NotEmpty(message = "账号不能为空")

@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author shadow
  */
 @ApiModel(value = "jsonObject", description = "结果对象类")
-public final class JsonObject<T extends Serializable> implements Serializable {
+public final class JsonObject<T> implements Serializable {
     private static final long serialVersionUID = 7458959932409467410L;
     public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
@@ -66,23 +66,23 @@ public final class JsonObject<T extends Serializable> implements Serializable {
         }
     }
 
-    public static <T extends Serializable> JsonObject<T> ok() {
+    public static <T> JsonObject<T> ok() {
         return new JsonObject<>();
     }
 
-    public static <T extends Serializable> JsonObject<T> ok(T data) {
+    public static <T> JsonObject<T> ok(T data) {
         return new JsonObject<>(data);
     }
 
-    public static <T extends Serializable> JsonObject<T> error(String code) {
+    public static <T> JsonObject<T> error(String code) {
         return new JsonObject<>(code, null);
     }
 
-    public static <T extends Serializable> JsonObject<T> error(String code, String msg) {
+    public static <T> JsonObject<T> error(String code, String msg) {
         return new JsonObject<>(code, msg);
     }
 
-    public static <T extends Serializable> JsonObject<T> error(String code, String msg, T data) {
+    public static <T> JsonObject<T> error(String code, String msg, T data) {
         return new JsonObject<>(code, msg, data);
     }
 
