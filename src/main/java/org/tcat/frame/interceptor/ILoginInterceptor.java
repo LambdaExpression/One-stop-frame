@@ -26,7 +26,7 @@ public class ILoginInterceptor extends AbstractInterceptor {
     private final static String DOMAIN = PropertiesUtil.getValue("config.properties", "domain");
     private final static String USER = PropertiesUtil.getValue("config.properties", "user.session");
 
-    private final static String USER_LOGIN = DOMAIN + "/user/login";
+    private final static String USER_LOGIN = DOMAIN + "/gm/login";
     private final static String NO_PERMISSION = DOMAIN + "/error/403";
 
     @Override

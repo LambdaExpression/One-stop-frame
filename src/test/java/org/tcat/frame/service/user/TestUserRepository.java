@@ -16,11 +16,11 @@ public class TestUserRepository extends JunitBaseTest {
     @Test
     public void test_save() {
         UserDto userDto = new UserDto()
-                .setId(5L)
+                .setUserId(5L)
                 .setAccount("account")
                 .setPassword("password");
 //                .setType(3);
-        show(userRepository.dynamicSave(userDto.getId(), userDto));
+        show(userRepository.dynamicSave(userDto.getUserId(), userDto));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class TestUserRepository extends JunitBaseTest {
     }
 
     @Test
-    public void test_findByAccount(){
+    public void test_findByAccount() {
         show(userRepository.findByAccount("account"));
         show(userRepository.findByAccount("Account"));
     }

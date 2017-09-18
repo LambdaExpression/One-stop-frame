@@ -11,6 +11,7 @@ import org.tcat.frame.annotation.ILogin;
 import org.tcat.frame.bean.JsonObject;
 import org.tcat.frame.bean.PageRequest;
 import org.tcat.frame.bean.PageResponse;
+import org.tcat.frame.bean.ResultObject;
 import org.tcat.frame.controller.BaseController;
 import org.tcat.frame.controller.system.vo.AdminVo;
 import org.tcat.frame.exception.code.ErrorCode;
@@ -110,8 +111,8 @@ public class AdminController extends BaseController {
 
     @ApiOperation(value = "创建用户")
     @RequestMapping(value = "", method = {RequestMethod.POST})
-    public JsonObject<AdminDto> create(@RequestBody AdminDto adminDto) {
-        if (adminDto == null || !ValidatorUtils.validate(adminDto).getResult()) {
+    public JsonObject create(@RequestBody AdminDto adminDto) {
+        if (adminDto == null) {
             return JsonObject.error(ErrorCode.C_param_missing);
         }
         if (gmAdminRepository.findByAccount(adminDto.getAccount()) != null) {
@@ -120,9 +121,12 @@ public class AdminController extends BaseController {
         adminDto.setDisable(AdminDisable.NO);
         UserIdDto userIdDto = userIdRepository.save(new UserIdDto(UserIdType.USER));
         adminDto.setUserId(userIdDto.getId());
-        adminDto = gmAdminRepository.save(adminDto);
-        adminDto.setPassword(null);
-        return JsonObject.ok(adminDto);
+        ResultObject resultObject = ValidatorUtils.validate(adminDto);
+        if (!resultObject.getResult()) {
+            return JsonObject.error(ErrorCode.C_param_missing, resultObject.getMessage());
+        }
+        gmAdminRepository.save(adminDto);
+        return JsonObject.ok();
     }
 
     @ApiOperation(value = "获取用户")
@@ -132,6 +136,7 @@ public class AdminController extends BaseController {
         if (adminDto == null) {
             return JsonObject.error(ErrorCode.C_param_illegal);
         }
+        adminDto.setPassword(null);
         return JsonObject.ok(adminDto);
     }
 

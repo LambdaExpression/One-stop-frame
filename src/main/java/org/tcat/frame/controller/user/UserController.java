@@ -5,11 +5,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.tcat.frame.annotation.ILogin;
 import org.tcat.frame.bean.JsonObject;
 import org.tcat.frame.bean.PageRequest;
 import org.tcat.frame.bean.PageResponse;
-import org.tcat.frame.bean.UserSession;
+import org.tcat.frame.bean.ResultObject;
 import org.tcat.frame.controller.BaseController;
 import org.tcat.frame.controller.user.vo.UserVo;
 import org.tcat.frame.exception.code.ErrorCode;
@@ -21,7 +21,6 @@ import org.tcat.frame.service.user.enums.UserIdType;
 import org.tcat.frame.service.user.enums.UserType;
 import org.tcat.frame.util.BeansConverter;
 import org.tcat.frame.util.PageUtils;
-import org.tcat.frame.util.StringUtils;
 import org.tcat.frame.util.ValidatorUtils;
 
 /**
@@ -30,6 +29,7 @@ import org.tcat.frame.util.ValidatorUtils;
 @Api(value = "/user", description = "用户管理")
 @RestController
 @RequestMapping("user")
+@ILogin(userIdType = UserIdType.STAFF)
 public class UserController extends BaseController {
 
     @Autowired
@@ -39,8 +39,8 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "创建用户")
     @RequestMapping(value = "", method = {RequestMethod.POST})
-    public JsonObject<UserDto> create(@RequestBody UserVo userVo) {
-        if (userVo == null || !ValidatorUtils.validate(userVo).getResult()) {
+    public JsonObject create(@RequestBody UserVo userVo) {
+        if (userVo == null) {
             return JsonObject.error(ErrorCode.C_param_missing);
         }
         if (userRepository.findByAccount(userVo.getAccount()) != null) {
@@ -49,11 +49,14 @@ public class UserController extends BaseController {
         UserIdDto userIdDto = userIdRepository.save(new UserIdDto(UserIdType.USER));
         userVo.setId(userIdDto.getId());
         UserDto userDto = BeansConverter.copy(userVo, UserDto.class)
-                .setId(userIdDto.getId())
+                .setUserId(userIdDto.getId())
                 .setType(UserType.ORDINARY);
-        userDto = userRepository.save(userDto);
-        userDto.setPassword(null);
-        return JsonObject.ok(userDto);
+        ResultObject resultObject = ValidatorUtils.validate(userDto);
+        if (!resultObject.getResult()) {
+            return JsonObject.error(ErrorCode.C_param_missing, resultObject.getMessage());
+        }
+        userRepository.save(userDto);
+        return JsonObject.ok();
     }
 
     @ApiOperation(value = "更新用户")
@@ -78,45 +81,6 @@ public class UserController extends BaseController {
         Page<UserDto> userDtoPage = userRepository.findAll(pageRequest);
         userDtoPage.getContent().forEach(i -> i.setPassword(null));
         return JsonObject.ok(PageUtils.pageConversion(userDtoPage));
-    }
-
-    @ApiOperation(value = "用户退出")
-    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
-    public JsonObject logout() {
-        this.resetSession();
-        return JsonObject.ok();
-    }
-
-    @ApiOperation(value = "用户登录页面")
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView login() {
-        return new ModelAndView("/login");
-    }
-
-    @ApiOperation(value = "用户登录")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public JsonObject login(String account, String password) {
-        if (StringUtils.isEmptyByTrim(account) || StringUtils.isEmptyByTrim(password)) {
-            return JsonObject.error((ErrorCode.C_param_missing));
-        }
-        UserDto userDto = userRepository.findByAccountAndPassword(account, password);
-        if (userDto == null) {
-            return JsonObject.error(ErrorCode.U_login_fail);
-        }
-        this.setUserSession(new UserSession()
-                .setId(userDto.getId())
-                .setAccount(userDto.getAccount()));
-        return JsonObject.ok();
-    }
-
-    @ApiOperation(value = "检查用户登录状态")
-    @RequestMapping(value = "/check", method = RequestMethod.GET)
-    public JsonObject<UserSession> check() {
-        UserSession userSession = this.getUserSession();
-        if (userSession == null) {
-            return JsonObject.error(ErrorCode.U_login_Un);
-        }
-        return JsonObject.ok(userSession);
     }
 
 }

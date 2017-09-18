@@ -12,6 +12,7 @@ import org.tcat.frame.service.user.enums.UserGender;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -29,7 +30,7 @@ public class AdminDto extends BaseDto {
     @Id
     @ApiModelProperty(value = "用户id")
     @Column(name = "user_id", nullable = false)
-    @NotEmpty(message = "用户id不能为空")
+    @NotNull(message = "用户id不能为空")
     private Long userId;
 
     @ApiModelProperty(value = "账号")
@@ -54,7 +55,7 @@ public class AdminDto extends BaseDto {
 
     @ApiModelProperty(value = "性别")
     @Column(nullable = false)
-    @NotEmpty(message = "性别不能为空")
+    @NotNull(message = "性别不能为空")
     private UserGender gender;
 
     @ApiModelProperty(value = "邮箱")
@@ -75,12 +76,12 @@ public class AdminDto extends BaseDto {
 
     @ApiModelProperty(value = "管理员等级")
     @Column(nullable = false)
-    @NotEmpty(message = "管理员等级不能为空")
+    @NotNull(message = "管理员等级不能为空")
     private AdminGrade grade;
 
     @ApiModelProperty(value = "是否禁用")
     @Column(nullable = false)
-    @NotEmpty(message = "是否禁用不能为空")
+    @NotNull(message = "是否禁用不能为空")
     private AdminDisable disable;
 
     @ApiModelProperty(value = "最后登录时间")

@@ -18,7 +18,7 @@ public interface GmRelAdminRoleRepository extends BaseRepository<GmRelAdminRoleD
     int deleteByAdminId(Long adminId);
 
     @Modifying
-    @Query(" DELETE FROM gm$rel_admin_role where user_id in ?1 ")
+    @Query(value = " DELETE FROM gm$rel_admin_role where user_id in ?1 ", nativeQuery = true)
     int deleteByAdminIds(List<Long> adminIds);
 
 }

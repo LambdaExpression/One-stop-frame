@@ -9,6 +9,8 @@ import org.tcat.frame.support.ExtJpaRepositoryFactoryBean;
 import org.tcat.frame.util.PropertiesUtil;
 import org.tcat.frame.util.WebUtils;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by Lin on 2017/8/3.
  */
@@ -33,7 +35,11 @@ public class JpaConfiguration implements AuditorAware<Long> {
      * @return 用户Session
      */
     private UserSession getUserSession() {
-        Object userSession = WebUtils.getHttpSession().getAttribute(USER);
+        HttpSession httpSession = WebUtils.getHttpSession();
+        if (httpSession == null) {
+            return null;
+        }
+        Object userSession = httpSession.getAttribute(USER);
         if (userSession instanceof UserSession) {
             return (UserSession) userSession;
         }

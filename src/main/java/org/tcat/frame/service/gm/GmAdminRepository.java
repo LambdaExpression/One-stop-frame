@@ -17,8 +17,10 @@ public interface GmAdminRepository extends BaseRepository<AdminDto, Long> {
 
     AdminDto findByAccount(String account);
 
+    AdminDto findByAccountAndPassword(String account, String password);
+
     @Modifying
-    @Query("update gm$admin set disable = ?1 where user_id in ?2 ")
+    @Query(value = " UPDATE gm$admin SET disable = ?1 WHERE user_id IN ?2 ", nativeQuery = true)
     int updateDisable(Integer disable, List<Long> userIds);
 
 }

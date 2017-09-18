@@ -19,8 +19,9 @@ public class UserDto extends BaseDto {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Column(name = "user_id")
     @ApiModelProperty(value = "ID")
-    private Long id;
+    private Long userId;
     @Column(unique = true, nullable = false)
     @ApiModelProperty(value = "账号名")
     private String account;
@@ -31,12 +32,12 @@ public class UserDto extends BaseDto {
     @ApiModelProperty(value = "用户类型")
     private UserType type;
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public UserDto setId(Long id) {
-        this.id = id;
+    public UserDto setUserId(Long userId) {
+        this.userId = userId;
         return this;
     }
 
